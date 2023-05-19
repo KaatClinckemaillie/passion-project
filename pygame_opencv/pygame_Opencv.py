@@ -1,7 +1,7 @@
 import cv2
 import pygame
 
-video_path = 'path/to/video'
+video_path = '/Users/kaatclinckemaillie/Desktop/PassionProject/code/passion-project/momument_1280x720.mp4'
 cap = cv2.VideoCapture(video_path)
 success, frame = cap.read()
 shape = frame.shape[1::-1]
