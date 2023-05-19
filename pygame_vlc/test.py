@@ -16,7 +16,7 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 
 # Functie om een video af te spelen
 def play_video(video_path):
-    subprocess.call(['omxplayer', '-o', 'hdmi', video_path])
+    subprocess.call(['vlc', '-o', 'hdmi', video_path])
 
 # Functie om een oppervlak te roteren
 def rotate_surface(surface, angle):
@@ -48,13 +48,15 @@ while running:
     # Laad de vorige video en roteer deze
     previous_video_index = (current_video_index - 1) % len(videos)
     previous_video_path = videos[previous_video_index]
-    previous_surface = pygame.image.load(previous_video_path).convert()
+    play_video(previous_video_path)
+    previous_surface = pygame.Surface((0, 0))  # Lege oppervlak omdat video rechtstreeks wordt afgespeeld
     previous_surface_rotated, previous_rect_rotated = rotate_surface(previous_surface, previous_rotation_angle)
     screen.blit(previous_surface_rotated, previous_rect_rotated)
 
     # Laad de huidige video en roteer deze
     current_video_path = videos[current_video_index]
-    current_surface = pygame.image.load(current_video_path).convert()
+    play_video(current_video_path)
+    current_surface = pygame.Surface((0, 0))  # Lege oppervlak omdat video rechtstreeks wordt afgespeeld
     current_surface_rotated, current_rect_rotated = rotate_surface(current_surface, current_rotation_angle)
     screen.blit(current_surface_rotated, current_rect_rotated)
 
