@@ -5,35 +5,316 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body{
+            height: 100vh;
+            display: grid;
+            place-content: center;
+            background-color: black;
+        }
+        .wrapper{
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            max-width: 1280;
+        }
+
+        video{
+            width: 1280px;
+            transform-origin: -2000px center;
+            transition: transform 0.8s;
+        }
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: -2000px center;
+            transition: transform 0.8s;
+            
+            
+        }
+
+        text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 40px;
+    }
+
+        .rect__mask {
+            -webkit-mask: url(#mask);
+            mask: url(#mask);
+        }
+
+        
+    </style>
 </head>
 <body>
-    <video ></video>
-
+    <div class="wrapper">
+        <video class="video" src="./assets/video/1.mp4" autoplay muted loop width="1280"></video>
+        <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <filter id="f1">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+              </filter>
+              <mask id="mask" x="0" y="0" width="100%" height="100%" >
+                <rect  x="0" y="0" width="100%" height="100%" fill="#fff"/>
+                <rect rx="20"  x="140" y="10" width="1000" height="700"  filter="url(#f1)"/>
+                
+              </mask>
+            </defs>
+            <rect class="rect__mask"  x="0" y="0" width="100%" height="100%" fill="#000"/>
+        </svg>
+    </div>
     <script>
         {   
-            /* const a = new Audio("../assets/audio/street.mp3");
-            const b = new Audio("../assets/audio/street.mp3");
-            const c = new Audio("../assets/audio/street.mp3");
-            const d = new Audio("../assets/audio/street.mp3");
-            const e = new Audio("../assets/audio/street.mp3"); */
-
-            // audio variables (10)
-            let a, b, c, d, e, f, g, h, i ,j;
-            const numberAudioInput = 10;
 
 
-            // video variables (5)
-            let k, l, m, n, o;
-            const numberVideoInput = 5;
+            const videos = [
+                {
+                    id: '1',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '2',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '3',
+                    moment: 'morning',
+                    location: 'transport'
+                },
+                {
+                    id: '4',
+                    moment: 'morning',
+                    location: 'bar'
+                },
+                {
+                    id: '5',
+                    moment: 'morning',
+                    location: 'monument'
+                },
+                {
+                    id: '6',
+                    moment: 'morning',
+                    location: 'monument'
+                },
+                {
+                    id: '7',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '8',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '9',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '10',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '11',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '12',
+                    moment: 'general',
+                    location: 'monument'
+                },
+                {
+                    id: '13',
+                    moment: 'general',
+                    location: 'sport'
+                },
+                {
+                    id: '14',
+                    moment: 'general',
+                    location: 'sport'
+                },
+                {
+                    id: '15',
+                    moment: 'general',
+                    location: 'bar'
+                },
+                {
+                    id: '16',
+                    moment: 'evening',
+                    location: 'street'
+                },
+                {
+                    id: '17',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '18',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '19',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '20',
+                    moment: 'evening',
+                    location: 'street'
+                },
+                {
+                    id: '21',
+                    moment: 'noon',
+                    location: 'monument'
+                },
+                {
+                    id: '22',
+                    moment: 'noon',
+                    location: 'monument'
+                },
+                {
+                    id: '23',
+                    moment: 'noon',
+                    location: 'street'
+                },
+                {
+                    id: '24',
+                    moment: 'noon',
+                    location: 'street'
+                },
+                {
+                    id: '25',
+                    moment: 'noon',
+                    location: 'bar'
+                },
+                {
+                    id: '26',
+                    moment: 'noon',
+                    location: 'transport'
+                },
+                {
+                    id: '28',
+                    moment: 'noon',
+                    location: 'bar'
+                },
+                {
+                    id: '29',
+                    moment: 'noon',
+                    location: 'sport'
+                }
 
-            //how save audio files in array???
-            const loadAudio = () => {
-                for(let i=0; i<10; i++){}
-            }
+            ]
+
+            const $video = document.querySelector('.video');
+            const $svg = document.querySelector('.svg');
+
+            let location = 'transport'
+
             
-            const init = () => {
-                loadAudio();
+
+
+            const selectNewVideo = () => {
+                const filteredVideos = videos.filter(video => video.location === location);
+                const randomVideo = filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
+                console.log(randomVideo);
+                $video.src = `./assets/video/${randomVideo.id}.mp4`
             }
+
+            const changeVideoAfterDelay = () => {
+                setTimeout(function() {
+                    // Code to be executed after 0.5 second
+                    console.log('Delayed execution!');
+                    selectNewVideo();
+                    $video.style.transform = 'rotate(0deg)';
+                    $svg.style.transform = 'rotate(0deg)';
+                }, 500); 
+            }
+
+            const rotateFrame = () => {
+                $video.style.transform = 'rotate(25deg)';
+                $svg.style.transform = 'rotate(25deg)';
+                changeVideoAfterDelay()
+            }
+
+            const birds = new Audio(`./assets/audio/birds.mp3`);
+            const coffee = new Audio(`./assets/audio/coffee.mp3`);
+            const rain = new Audio(`./assets/audio/rain.mp3`);
+            const street = new Audio(`./assets/audio/street.mp3`);
+            const elevator = new Audio(`./assets/audio/elevator.mp3`);
+            const metro = new Audio(`./assets/audio/metro.mp3`);
+            const kassa = new Audio(`./assets/audio/kassa.mp3`);
+
+
+
+            const handleKeydown = (e) => {
+                const key = e.key;
+
+                switch(key){
+                    case 'a':
+                        location = 'transport';
+                        rotateFrame();
+                        break;
+                    case 'b':
+                        location = 'street';
+                        rotateFrame();
+                        break;
+                    case 'c':
+                        location = 'bar';
+                        rotateFrame();
+                        break;
+                    case 'd':   
+                        location = 'monument';
+                        rotateFrame();
+                        break;
+                    case 'e':   
+                        location = 'sport';
+                        rotateFrame();
+                        break;
+
+                    // audio files
+                    case 'f':
+                        birds.play();
+                        break;
+                    case 'g':
+                        coffee.play();
+                        break;
+                    case 'h':
+                        rain.play();
+                        break;
+                    case 'i':
+                        street.play();
+                        break;
+                    case 'j':
+                        elevator.play();
+                        break;
+                    case 'k':
+                        bar.play();
+                        break;
+                    case 'l':
+                        kassa.play();
+                        break;
+
+                    default:
+                        console.log('unknown key pressed');
+                        break;
+                }
+                
+
+            }
+            const init = () => {
+                document.addEventListener('keydown', handleKeydown);
+            };
 
             init();
         }
