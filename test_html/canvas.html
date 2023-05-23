@@ -6,244 +6,544 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>WebGL</title>
   <style>
-    .wrapper{
-        display: grid;
-        grid-template: 1fr / 1fr;
+    body{
+            height: 100vh;
+            display: grid;
+            place-content: center;
+            background-color: black;
     }
-    #c {
-        grid-row: 1 / 2;
-        grid-column: 1 / 2;
+
+    .wrapper{
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            max-width: 1280;
+    }
+    svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: -2000px center;
+            transition: transform 0.8s;
+            
+            
+        }
+
+    .video-canvas {
+      display: grid;
+      grid-template: 1fr / 1fr;
+      width: 1280px;
+      transform-origin: -2000px center;
+      transition: transform 0.8s;
     }
 
     #video {
-        grid-row: 1 / 2;
-        grid-column: 1 / 2;
+      grid-row: 1 / 2;
+      grid-column: 1/2;
     }
+
+    #c {
+      grid-row: 1 / 2;
+      grid-column: 1/2;
+    }
+
+    .rect__mask {
+            -webkit-mask: url(#mask);
+            mask: url(#mask);
+        }
   </style>
 </head>
 <body>
-    <div class="wrapper">
-        <video id="video" src="./assets/video/metro.mp4" preload="auto" muted autoplay playsinline></video>
-        <canvas id="c"></canvas>
+  <div class="wrapper">
+    <div class="video-canvas">
+      <video id="video" src="video/1.mp4" preload="auto" loop autoplay muted playsinline></video>
+      <canvas id="c"></canvas>
+      
     </div>
-  
-
+    <svg class="svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="f1">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+        </filter>
+        <mask id="mask" x="0" y="0" width="100%" height="100%" >
+          <rect  x="0" y="0" width="100%" height="100%" fill="#fff"/>
+          <rect rx="20"  x="140" y="10" width="1000" height="700"  filter="url(#f1)"/>
+          
+        </mask>
+      </defs>
+      <rect class="rect__mask"  x="0" y="0" width="100%" height="100%" fill="#000"/>
+    </svg>
+  </div>
   <script>
   {
+    const $canvas = document.querySelector('.video-canvas');
+    const $svg = document.querySelector('.svg');
+    let draw = true;
 
-const createShader = (gl, type, source) => {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-  if (success) {
-    return shader;
-  }
-  console.error(gl.getShaderInfoLog(shader));
-  gl.deleteShader(shader);
-};
+    let location = 'transport'
+    const videos = [
+                {
+                    id: '1',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '2',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '3',
+                    moment: 'morning',
+                    location: 'transport'
+                },
+                {
+                    id: '4',
+                    moment: 'morning',
+                    location: 'bar'
+                },
+                {
+                    id: '5',
+                    moment: 'morning',
+                    location: 'monument'
+                },
+                {
+                    id: '6',
+                    moment: 'morning',
+                    location: 'monument'
+                },
+                {
+                    id: '7',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '8',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '9',
+                    moment: 'morning',
+                    location: 'street'
+                },
+                {
+                    id: '10',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '11',
+                    moment: 'general',
+                    location: 'transport'
+                },
+                {
+                    id: '12',
+                    moment: 'general',
+                    location: 'monument'
+                },
+                {
+                    id: '13',
+                    moment: 'general',
+                    location: 'sport'
+                },
+                {
+                    id: '14',
+                    moment: 'general',
+                    location: 'sport'
+                },
+                {
+                    id: '15',
+                    moment: 'general',
+                    location: 'bar'
+                },
+                {
+                    id: '16',
+                    moment: 'evening',
+                    location: 'street'
+                },
+                {
+                    id: '17',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '18',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '19',
+                    moment: 'evening',
+                    location: 'bar'
+                },
+                {
+                    id: '20',
+                    moment: 'evening',
+                    location: 'street'
+                },
+                {
+                    id: '21',
+                    moment: 'noon',
+                    location: 'monument'
+                },
+                {
+                    id: '22',
+                    moment: 'noon',
+                    location: 'monument'
+                },
+                {
+                    id: '23',
+                    moment: 'noon',
+                    location: 'street'
+                },
+                {
+                    id: '24',
+                    moment: 'noon',
+                    location: 'street'
+                },
+                {
+                    id: '25',
+                    moment: 'noon',
+                    location: 'bar'
+                },
+                {
+                    id: '26',
+                    moment: 'noon',
+                    location: 'transport'
+                },
+                {
+                    id: '28',
+                    moment: 'noon',
+                    location: 'bar'
+                },
+                {
+                    id: '29',
+                    moment: 'noon',
+                    location: 'sport'
+                }
 
-const createProgram = (gl, vertexShader, fragmentShader) => {
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  const success = gl.getProgramParameter(program, gl.LINK_STATUS);
-  if (success) {
-    return program;
-  }
-  console.error(gl.getProgramInfoLog(program));
-  gl.deleteProgram(program);
-};
+            ]
+    
+    
 
-const canvas = document.querySelector('#c');
-const $video = document.getElementById('video');
-const gl = canvas.getContext('webgl');
-const vertexShader = createShader(gl, gl.VERTEX_SHADER, `
-precision mediump float;
+    const selectNewVideo = () => {
+      const filteredVideos = videos.filter(video => video.location === location);
+      const randomVideo = filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
+      console.log(randomVideo);
+      $video.src = `./video/${randomVideo.id}.mp4`
+    }
 
-attribute vec2 a_position;
-attribute vec2 a_texCoord;
+    const changeVideoAfterDelay = () => {
+      setTimeout(function() {
+          // Code to be executed after 0.5 second
+          console.log('Delayed execution!');
+          selectNewVideo();
+          setupVideo();
+          $canvas.style.transform = 'rotate(0deg)';
+          $svg.style.transform = 'rotate(0deg)';
+      }, 500); 
+      
+    }
 
-varying vec2 uv;
+    const rotateFrame = () => {
+      draw = false;
+      $canvas.style.transform = 'rotate(25deg)';
+      $svg.style.transform = 'rotate(25deg)';
+      changeVideoAfterDelay()
+    }
 
-void main() {     
-  gl_Position = vec4(a_position, 1, 1);
-  uv = a_texCoord;
-}
-`);
-const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, `
+    const handleKeydown = (e) => {
+      const key = e.key;
+
+        switch(key){
+          case 'a':
+            location = 'transport';
+            rotateFrame();
+            break;
+          case 'b':
+            location = 'street';
+            rotateFrame();
+            break;
+          case 'c':
+            location = 'bar';
+            rotateFrame();
+            break;
+          case 'd':   
+            location = 'monument';
+            rotateFrame();
+            break;
+          case 'e':   
+            location = 'sport';
+            rotateFrame();
+            break;
+          // audio files
+          case 'f':
+            birds.play();
+            break;
+          case 'g':
+            coffee.play();
+            break;
+          case 'h':
+            rain.play();
+            break;
+          case 'i':
+            street.play();
+            break;
+          case 'j':
+            elevator.play();
+            break;
+          case 'k':
+            bar.play();
+            break;
+          case 'l':
+            kassa.play();
+            break;
+          default:
+            console.log('unknown key pressed');
+            break;
+          }
+                
+
+    }
+
+
+    const createShader = (gl, type, source) => {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      const success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+      if (success) {
+        return shader;
+      }
+      console.error(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+    };
+
+    const createProgram = (gl, vertexShader, fragmentShader) => {
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+      if (success) {
+        return program;
+      }
+      console.error(gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+    };
+
+    const canvas = document.querySelector('#c');
+    const $video = document.querySelector('#video');
+    const gl = canvas.getContext('webgl');
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, `
+    precision mediump float;
+    
+    attribute vec2 a_position;
+    attribute vec2 a_texCoord;
+
+    varying vec2 uv;
+    
+    void main() {     
+      gl_Position = vec4(a_position, 1, 1);
+      uv = a_texCoord;
+    }
+    `);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, `
     precision mediump float;
 
     uniform sampler2D iChannel0;
-    uniform float iTime;
-    uniform float mirrorPos;
 
     uniform vec3 iResolution;
+    uniform float iTime;
 
     varying vec2 uv;
+    
+    
 
-    #define CRT_STRENGTH 0.8
-    #define CA_MAX_PIXEL_DIST 5.0
-    #define BORDER_SIZE 0.2
-    #define BORDER_STRENGTH 0.8
-    #define SATURATION 1.4
+    // Loosely based on postprocessing shader by inigo quilez, License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
 
-
-    vec4 read(vec2 uv)
+    vec2 curve(vec2 uv)
     {
-        //you might wanna do stuff here when using this in your shader
-        return texture2D(iChannel0, uv);
-    }
-    vec3 saturation(vec3 rgb, float amount)
-    {
-        const vec3 W = vec3(0.2125, 0.7154, 0.0721);
-        vec3 intensity = vec3(dot(rgb, W));
-        return mix(intensity, rgb, amount);
+      uv = (uv - 0.5) * 2.0;
+      uv *= 1.1;	
+      uv.x *= 1.0 + pow((abs(uv.y) / 5.0), 2.0);
+      uv.y *= 1.0 + pow((abs(uv.x) / 4.0), 2.0);
+      uv  = (uv / 2.0) + 0.5;
+      uv =  uv *0.92 + 0.04;
+      return uv;
     }
     void mainImage( out vec4 fragColor, in vec2 fragCoord )
     {
-        vec2[3] ca;
-        ca[0] = vec2(-CA_MAX_PIXEL_DIST, -CA_MAX_PIXEL_DIST);
-        ca[1] = vec2(0.0);
-        ca[2] = vec2(CA_MAX_PIXEL_DIST, CA_MAX_PIXEL_DIST);
-        
-        vec2 pixel = 1.0 / iResolution.xy;
-        vec2 uv = fragCoord * pixel;
+        vec2 q = fragCoord.xy / iResolution.xy;
+        vec2 uv = q;
+        uv.y = 1.0 - uv.y;
+        uv = curve( uv );
+        vec3 oricol = texture2D( iChannel0, vec2(q.x,q.y) ).xyz;
+        vec3 col;
+      float x =  sin(0.3*iTime+uv.y*21.0)*sin(0.7*iTime+uv.y*29.0)*sin(0.3+0.33*iTime+uv.y*31.0)*0.0017;
 
+        col.r = texture2D(iChannel0,vec2(x+uv.x+0.001,uv.y+0.001)).x+0.05;
+        col.g = texture2D(iChannel0,vec2(x+uv.x+0.000,uv.y-0.002)).y+0.05;
+        col.b = texture2D(iChannel0,vec2(x+uv.x-0.002,uv.y+0.000)).z+0.05;
+        col.r += 0.08*texture2D(iChannel0,0.75*vec2(x+0.025, -0.027)+vec2(uv.x+0.001,uv.y+0.001)).x;
+        col.g += 0.05*texture2D(iChannel0,0.75*vec2(x+-0.022, -0.02)+vec2(uv.x+0.000,uv.y-0.002)).y;
+        col.b += 0.08*texture2D(iChannel0,0.75*vec2(x+-0.02, -0.018)+vec2(uv.x-0.002,uv.y+0.000)).z;
 
-        int row = int(fragCoord.y)%2;
-        int col = (int(fragCoord.x)+row)%3;
-        
-        vec2 nuv = 2. * abs(uv-vec2(0.5));
-        vec2 caShift = (length(nuv) / sqrt(2.0)) * pixel;
-        
-        vec3 src = vec3(0.0);
-        for(int i = 0; i < 3; i++)
-        {
-            src[i] = read(uv - ca[i] * caShift)[i] * ((i==col) ? 1.0 : 1.-CRT_STRENGTH);
-        }
-        float d = (1.-nuv.x) * (1.-nuv.y);
-        d = (1.-BORDER_STRENGTH) + BORDER_STRENGTH * smoothstep(0.0, BORDER_SIZE, sqrt(d));
-        src *= d;
-        src = saturation(src, SATURATION);
-        fragColor = vec4(src,1.0);
+        col = clamp(col*0.6+0.4*col*col*1.0,0.0,1.0);
+
+        float vig = (0.0 + 1.0*16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y));
+      col *= vec3(pow(vig,0.3));
+
+        col *= vec3(0.95,1.05,0.95);
+      col *= 2.8;
+
+      float scans = clamp( 0.35+0.35*sin(3.5*iTime+uv.y*iResolution.y*1.5), 0.0, 1.0);
+      
+      float s = pow(scans,1.7);
+      col = col*vec3( 0.4+0.7*s) ;
+
+        col *= 1.0+0.01*sin(110.0*iTime);
+      if (uv.x < 0.0 || uv.x > 1.0)
+        col *= 0.0;
+      if (uv.y < 0.0 || uv.y > 1.0)
+        col *= 0.0;
+      
+      col*=1.0-0.65*vec3(clamp((mod(fragCoord.x, 2.0)-1.0)*2.0,0.0,1.0));
+      
+        float comp = smoothstep( 0.1, 0.9, sin(iTime) );
+    
+      // Remove the next line to stop cross-fade between original and postprocess
+    //	col = mix( col, oricol, comp );
+
+        fragColor = vec4(col,1.0);
     }
+
     void main() {
-    mainImage(gl_FragColor, gl_FragCoord.xy);
+      gl_FragColor = texture2D(iChannel0, uv);
+      mainImage(gl_FragColor, gl_FragCoord.xy);
     }
-`);
-const program = createProgram(gl, vertexShader, fragmentShader);
-const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-const positionBuffer = gl.createBuffer();
-const texCoordAttributeLocation = gl.getAttribLocation(program, "a_texCoord");
-const texCoordBuffer = gl.createBuffer();
+    `);
+    const program = createProgram(gl, vertexShader, fragmentShader);
+    const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+    const positionBuffer = gl.createBuffer();
+    const texCoordAttributeLocation = gl.getAttribLocation(program, "a_texCoord");
+    const texCoordBuffer = gl.createBuffer();
 
-const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
-const iTimeLocation = gl.getUniformLocation(program, "iTime");
-const mirrorPosLocation = gl.getUniformLocation(program, "mirrorPos");
+    const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
+    const iTimeLocation = gl.getUniformLocation(program, "iTime");
 
-const init = async () => {
-  gl.useProgram(program);
+    const init = async () => {
+      
+      document.addEventListener('keydown', handleKeydown);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-        -1.0, 1.0,
-        1.0, 1.0,
-        -1.0, -1.0,
+      gl.useProgram(program);
 
-        -1.0, -1.0,
-        1.0, 1.0,
-        1.0, -1.0
-    ]),
-    gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(positionAttributeLocation);
-  gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([
+            -1.0, 1.0,
+            1.0, 1.0,
+            -1.0, -1.0,
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-        0.0, 0.0,
-        1.0, 0.0,
-        0.0, 1.0,
+            -1.0, -1.0,
+            1.0, 1.0,
+            1.0, -1.0
+        ]),
+        gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(positionAttributeLocation);
+      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-        0.0, 1.0,
-        1.0, 0.0,
-        1.0, 1.0,
-    ]),
-    gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(texCoordAttributeLocation);
-  gl.vertexAttribPointer(texCoordAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array([
+            0.0, 0.0,
+            1.0, 0.0,
+            0.0, 1.0,
+
+            0.0, 1.0,
+            1.0, 0.0,
+            1.0, 1.0,
+        ]),
+        gl.STATIC_DRAW);
+      gl.enableVertexAttribArray(texCoordAttributeLocation);
+      gl.vertexAttribPointer(texCoordAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+      setupVideo();
+      
+
+      
+    };
+
+    const setupVideo = () => {
+      $video.addEventListener("canplay", () => {
+        uploadImageToTexture($video, "iChannel0", 0);
+
+        canvas.width = $video.videoWidth;
+        canvas.height = $video.videoHeight;
+
+        gl.uniform3f(iResolutionLocation, canvas.width, canvas.height,0);
+        
+        draw = true;
+        drawScene();
+      });
+    }
+
+    const drawScene = (time = 0) => {
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(program);
+
+      gl.uniform1f(iTimeLocation, time / 1000);
+      uploadImageToTexture($video, "iChannel0", 0);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      if(draw){
+        requestAnimationFrame(drawScene);
+      }
+    };
+
+    const loadImage = (src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.addEventListener("load", () => resolve(img));
+        img.addEventListener("error", err => reject(err));
+        img.src = src;
+      });
+    };
+
+    const textures = {};
 
 
 
-  $video.addEventListener('canplay', (event) => {
-    console.log('video can start');
-    uploadImageToTexture($video, "iChannel0", 0);
+    const uploadImageToTexture = (img, uniformName, textureUnitIndex) => {
+      const u_imageLoc = gl.getUniformLocation(program, uniformName);
+      gl.uniform1i(u_imageLoc, textureUnitIndex);
 
-    canvas.width = $video.videoWidth;
-    canvas.height = $video.videoHeight;
+      if(!textures[uniformName]) {
+        textures[uniformName] = gl.createTexture();
+      }
 
-    gl.uniform3f(iResolutionLocation, canvas.width, canvas.height, 0);
-    gl.uniform1f(mirrorPosLocation, 0.3);
-    drawScene();
+      const texture = textures[uniformName];
+      gl.activeTexture(gl.TEXTURE0 + textureUnitIndex);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+    
+      // Set the parameters so we can render any size image.
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    
+      // Upload the image into the texture.
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+    };
 
-  });      
-};
-
-const drawScene = (time = 0) => {
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  gl.clearColor(0, 0, 0, 0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.useProgram(program);
-  uploadImageToTexture($video, "iChannel0", 0);
-  gl.uniform1f(iTimeLocation, time / 1000);
-
-  gl.drawArrays(gl.TRIANGLES, 0, 6);
-
-  requestAnimationFrame(drawScene);
-};
-
-const loadImage = (src) => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.addEventListener("load", () => resolve(img));
-    img.addEventListener("error", err => reject(err));
-    img.src = src;
-  });
-};
-
-const textures = {};
-
-const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
-
-const uploadImageToTexture = (img, uniformName, textureUnitIndex) => {
-  const u_imageLoc = gl.getUniformLocation(program, uniformName);
-  gl.uniform1i(u_imageLoc, textureUnitIndex);
-
-  if (!textures[uniformName]) {
-    textures[uniformName] = gl.createTexture();
+    init();
   }
-
-  const texture = textures[uniformName];
-  gl.activeTexture(gl.TEXTURE0 + textureUnitIndex);
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-
-  // Set the parameters so we can render any size image.
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-  // Upload the image into the texture.
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-};
-
-init();
-}
   </script>
 </body>
 </html>
