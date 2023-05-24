@@ -255,6 +255,10 @@
       changeVideoAfterDelay()
     }
 
+    const playAduio = (audio) => {
+      audio.play();
+    }
+
     const handleKeydown = (e) => {
       const key = e.key;
 
@@ -281,25 +285,25 @@
             break;
           // audio files
           case 'f':
-            birds.play();
+            playAduio(birds);
             break;
           case 'g':
-            coffee.play();
+            playAduio(coffee);
             break;
           case 'h':
-            rain.play();
+            playAduio(rain);
             break;
           case 'i':
-            street.play();
+            playAduio(street);
             break;
           case 'j':
-            elevator.play();
+            playAduio(elevator);
             break;
           case 'k':
-            bar.play();
+            playAduio(kassa);
             break;
           case 'l':
-            kassa.play();
+            playAduio(americans);
             break;
           default:
             console.log('unknown key pressed');
