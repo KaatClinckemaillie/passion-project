@@ -14,6 +14,7 @@ const int black_lightPin = 8;
 int dialState = 0;
 int numberState = 0;
 int hookState = 0;
+int prev_hookState = 0;
 int prev_numberState = 0;
 int prev_dialState = 0;
 int countNumber = 0;
@@ -41,6 +42,12 @@ void loop() {
     //Serial.println("closed");
   }
 
+  // when putting the phone back on the receiver
+  if(prev_hookState == LOW && hookState == HIGH){
+    Serial.println("reset");
+  }
+  
+  prev_hookState = hookState;
   // if phone picked up, start checking buttons and dial
   if(hookState == LOW){
     if(dialState == LOW) {
@@ -62,6 +69,7 @@ void loop() {
     }
 
     prev_dialState = dialState;
+    
   }
 }
 
