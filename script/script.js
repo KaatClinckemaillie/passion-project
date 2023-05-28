@@ -143,6 +143,7 @@
     },
   ];
 
+  const beep = new Audio(`../assets/audio/beep.mp3`);
   // audio files
   const audio = [
     new Audio(`../assets/audio/birds.mp3`),
@@ -153,24 +154,26 @@
     new Audio(`../assets/audio/metro.mp3`),
     [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)]
   ]
-/*   const birds = new Audio(`../assets/audio/birds.mp3`);
-  const coffee = new Audio(`../assets/audio/coffee.mp3`);
-  const rain = new Audio(`../assets/audio/rain.mp3`);
-  const street = new Audio(`../assets/audio/street.mp3`);
-  const elevator = new Audio(`../assets/audio/elevator.mp3`);
-  const metro = new Audio(`../assets/audio/metro.mp3`);
-  const kassa = [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)]; */
   
   const $video = document.querySelector(".video");
   const $svg = document.querySelector(".svg");
   const $intro = document.querySelector(".intro");
+  const $time = document.querySelector(".time");
+  const $date = document.querySelector(".date");
+  const $overlay = document.querySelector(".overlay");
 
   let location = "transport";
+  const numberCheckArray = [];
+  const numberArray = ['f', 'o', 'o'];
+  let timeInterval;
+  let zone = '';
+  let moment = '';
+  let prev_moment = '';
 
   const selectNewVideo = () => {
-    const filteredVideos = videos.filter(
-      (video) => video.location === location
-    );
+
+    const filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location);
+
     const randomVideo =
       filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
     console.log(randomVideo);
@@ -193,7 +196,58 @@
     changeVideoAfterDelay();
   };
 
-  
+  const displayTime = () => {
+    let date;
+    const dateBrussels = new Date();
+    const dateDc = new Date(dateBrussels.toLocaleString("en-US", { timeZone: zone }));
+
+    if(zone === 'Europe/Brussels'){
+      date = dateBrussels;
+    }else if(zone === 'America/New_York'){
+      date = dateDc;
+    }
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    
+    selectMoment(hours);
+    
+    $time.innerHTML = `${hours}:${minutes}:${seconds}`;
+    $date.innerHTML = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  };
+
+  const selectMoment = (hours) => {
+
+    if(zone === ''){
+      moment = "general";
+    }else if (hours >= 4 && hours < 11) {
+      moment = "morning";
+    } else if (hours >= 11 && hours < 17) {
+      moment = "noon";
+    } else if (hours >= 17 && hours < 22) {
+      moment = "evening";
+    } else {
+      moment = "general";
+    }
+
+    if(moment !== prev_moment){
+      selectNewVideo();
+    }
+    prev_moment = moment;
+
+  };
+
+  const switchZone = (newZone) => { 
+    zone = newZone;
+    if(zone === ''){
+      clearInterval(timeInterval);
+      $overlay.classList.add("hidden");
+    }else {
+      timeInterval = setInterval(displayTime, 1000);
+      $overlay.classList.remove("hidden");
+    }
+    
+  }
 
   const playAduio = (audioNumber) => {
     if (audioNumber === 6) {
@@ -231,8 +285,17 @@
       }
     });
   };    
-  const numberCheckArray = [];
-  const numberArray = ['f', 'o', 'o'];
+
+
+
+
+  const start = () => {
+    beep.play();
+    beep.loop = true;
+  }
+
+
+  
 
   // check if two arrays are equal
   const checkEqual = (arr1, arr2) => {
@@ -247,8 +310,14 @@
   const handleKeydown = (e) => {
     const key = e.key;
     // check state
+
+
     
     if(state == "start"){
+      if(key === "s"){
+        start();
+      }
+      
       if(numberCheckArray.length < 3){
         numberCheckArray.push(key);
         if(!checkEqual(numberCheckArray, numberArray)){
@@ -260,6 +329,8 @@
         state = "play";
         $intro.classList.add("hidden");
         $video.classList.remove("hidden");
+        beep.pause();
+        beep.currentTime = 0;
       } 
 
     }else if(state == "play"){
@@ -307,7 +378,16 @@
       case "l":
         playAduio(6);
         break;
-
+      case "p":
+        switchZone('Europe/Brussels');
+        break;
+      case "q":
+        switchZone('America/New_York');
+        break;
+      case "s":
+        switchZone('');
+        break;
+      // reset
       case "r":
           reset();
           break;

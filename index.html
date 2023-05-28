@@ -11,16 +11,23 @@
   </head>
   <body>
     <div class="wrapper">
-      <video
-        class="video hidden"
-        src="../../assets/video/1.mp4"
-        autoplay
-        muted
-        loop
-        width="1280"
-      ></video>
-      <div class="intro">
-        <p>Recall to DC</p>
+      <div class="frame">
+        <div class="overlay hidden">
+          <div class="date text"></div>
+          <div class="time text"></div>
+        </div>
+        <video
+          class="video hidden"
+          src="../../assets/video/1.mp4"
+          autoplay
+          muted
+          loop
+          width="1280"
+        ></video>
+        <div class="intro">
+          <p>Recall to DC</p>
+        </div>
+        
       </div>
       <svg
         class="svg"
@@ -54,6 +61,7 @@
         />
       </svg>
       <div class="vignet"></div>
+      
     </div>
     <script src="script/script.js"></script>
 
