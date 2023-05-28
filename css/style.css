@@ -41,10 +41,25 @@ svg {
   height: 100%;
   transform-origin: -2000px center;
   transition: transform 0.8s;
+
   
 }
 
 .rect__mask {
   -webkit-mask: url(#mask);
   mask: url(#mask);
+}
+
+.intro {
+  width: 1280px;
+  height: 720px;
+  background-color: white;
+  color: black;
+  display: grid;
+  place-content: center;
+  border: black solid 3px;
+}
+
+.hidden {
+  display: none;
 }

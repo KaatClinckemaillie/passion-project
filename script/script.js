@@ -144,16 +144,26 @@
   ];
 
   // audio files
-  const birds = new Audio(`../assets/audio/birds.mp3`);
+  const audio = [
+    new Audio(`../assets/audio/birds.mp3`),
+    new Audio(`../assets/audio/coffee.mp3`),
+    new Audio(`../assets/audio/rain.mp3`),
+    new Audio(`../assets/audio/street.mp3`),
+    new Audio(`../assets/audio/elevator.mp3`),
+    new Audio(`../assets/audio/metro.mp3`),
+    [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)]
+  ]
+/*   const birds = new Audio(`../assets/audio/birds.mp3`);
   const coffee = new Audio(`../assets/audio/coffee.mp3`);
   const rain = new Audio(`../assets/audio/rain.mp3`);
   const street = new Audio(`../assets/audio/street.mp3`);
   const elevator = new Audio(`../assets/audio/elevator.mp3`);
   const metro = new Audio(`../assets/audio/metro.mp3`);
-  const kassa = [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)];
+  const kassa = [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)]; */
   
   const $video = document.querySelector(".video");
   const $svg = document.querySelector(".svg");
+  const $intro = document.querySelector(".intro");
 
   let location = "transport";
 
@@ -185,26 +195,42 @@
 
   
 
-  const playAduio = (audio) => {
-    if (audio === kassa) {
-      const randomAudio = kassa[Math.floor(Math.random() * kassa.length)];
+  const playAduio = (audioNumber) => {
+    if (audioNumber === 6) {
+      const randomAudio = audio[audioNumber][Math.floor(Math.random() * audio[audioNumber].length)];
       randomAudio.play();
       return;
     }
 
-    if(!audio.paused) {
-      audio.pause();
-      audio.currentTime = 0;
+    if(!audio[audioNumber].paused) {
+      audio[audioNumber].pause();
+      audio[audioNumber].currentTime = 0;
       return;
     }else {
-      audio.play();
-      if (audio === street || audio === birds || audio === rain || audio === coffee) {
-        audio.loop = true;
+      audio[audioNumber].play();
+      if (audioNumber <= 3) {
+        audio[audioNumber].loop = true;
       }
     }
   };
 
-
+  const reset = () => {
+    state = "start";
+    $intro.classList.remove("hidden");
+    $video.classList.add("hidden");
+    // stop all audio
+    audio.forEach((item, index) => {
+      if(index !== 6){
+        item.pause();
+        item.currentTime = 0;
+      }else {
+        item.forEach((item) => {
+          item.pause();
+          item.currentTime = 0;
+        })
+      }
+    });
+  };    
   const numberCheckArray = [];
   const numberArray = ['f', 'o', 'o'];
 
@@ -217,7 +243,6 @@
     }
     return true;
   }
-
 
   const handleKeydown = (e) => {
     const key = e.key;
@@ -233,6 +258,8 @@
         }
       }else if(numberCheckArray.length === 3){
         state = "play";
+        $intro.classList.add("hidden");
+        $video.classList.remove("hidden");
       } 
 
     }else if(state == "play"){
@@ -260,26 +287,30 @@
         break;
       // audio files
       case "f":
-        playAduio(birds);
+        playAduio(0);
         break;
       case "g":
-        playAduio(coffee);
+        playAduio(1);
         break;
       case "h":
-        playAduio(rain);
+        playAduio(2);
         break;
       case "i":
-        playAduio(street);
+        playAduio(3);
         break;
       case "j":
-        playAduio(elevator);
+        playAduio(4);
         break;
       case "k":
-        playAduio(kassa);
+        playAduio(5);
         break;
       case "l":
-        playAduio(metro);
+        playAduio(6);
         break;
+
+      case "r":
+          reset();
+          break;
       default:
         console.log("unknown key pressed");
         break;
