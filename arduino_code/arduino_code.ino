@@ -1,3 +1,5 @@
+#include "Keyboard.h"
+
 const int  hookPin = 2;
 
 const int dialPin = 3; // Closes when rotating starts
@@ -64,8 +66,9 @@ void setup() {
 
   pinMode(ledPin_1, OUTPUT); 
   pinMode(ledPin_2, OUTPUT); 
-  digitalWrite(ledPin_1, HIGH);
+  digitalWrite(ledPin_1, LOW);
   digitalWrite(ledPin_2, LOW);
+  Keyboard.begin();
 }
 
 void loop() {
@@ -77,6 +80,8 @@ void loop() {
   // when putting the phone back on the receiver
   if(prev_hookState == LOW && hookState == HIGH){
     Serial.println("reset");
+    digitalWrite(ledPin_1, LOW);
+    digitalWrite(ledPin_2, LOW);
   }
   prev_hookState = hookState;
 
@@ -84,11 +89,11 @@ void loop() {
   if(hookState == LOW){
     checkTimeButton();
 
-    checkButton(buttonPin_1, buttonState_1, prev_buttonState_1);
-    checkButton(buttonPin_2, buttonState_2, prev_buttonState_2);
-    checkButton(buttonPin_3, buttonState_3, prev_buttonState_3);
-    checkButton(buttonPin_4, buttonState_4, prev_buttonState_4);
-    checkButton(buttonPin_5, buttonState_5, prev_buttonState_5);
+    checkButton(buttonPin_1, buttonState_1, prev_buttonState_1, 1);
+    checkButton(buttonPin_2, buttonState_2, prev_buttonState_2, 2);
+    checkButton(buttonPin_3, buttonState_3, prev_buttonState_3, 3);
+    checkButton(buttonPin_4, buttonState_4, prev_buttonState_4, 4);
+    checkButton(buttonPin_5, buttonState_5, prev_buttonState_5, 5);
 
     if(dialState == LOW) {
       //Start counting numbers when dial is pressed
@@ -103,8 +108,43 @@ void loop() {
 
     if(prev_dialState == LOW && dialState == HIGH){
       number = countNumber;
-      Serial.println("stop");
       Serial.println(number);
+      switch (number) {
+      case 1:
+        Keyboard.write('f');
+        break;
+      case 2:
+        Keyboard.write('g');
+        break;
+      case 3:
+        Keyboard.write('h');
+        break;
+      case 4:
+        Keyboard.write('i');
+        break;
+      case 5:
+        Keyboard.write('j');
+        break;
+      case 6:
+        Keyboard.write('k');
+        break;
+      case 7:
+        Keyboard.write('l');
+        break;
+      case 8:
+        Keyboard.write('m');
+        break;
+      case 9:
+        Keyboard.write('n');
+        break;
+      case 10:
+        Keyboard.write('o');
+        break;
+
+      }
+
+
+
       countNumber = 0;
     }
 
@@ -113,15 +153,33 @@ void loop() {
   }
 }
 
-void checkButton (int buttonPin, int& buttonState, int& prev_buttonState) {
+void checkButton (int buttonPin, int& buttonState, int& prev_buttonState, int number) {
   buttonState = digitalRead(buttonPin);
 
 
   if(buttonState == LOW && prev_buttonState == HIGH){
     Serial.print("pressed button ");
     Serial.println(buttonPin);
+
+    switch (number) {
+      case 1:
+        Keyboard.write('a');
+        break;
+      case 2:
+        Keyboard.write('b');
+        break;
+      case 3:
+        Keyboard.write('d');
+        break;
+      case 4:
+        Keyboard.write('d');
+        break;
+      case 5:
+        Keyboard.write('e');
+        break;
+    }
     delay(50);
-  }
+    }
   prev_buttonState = buttonState;
 
 }
