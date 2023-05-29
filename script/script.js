@@ -167,13 +167,18 @@
   const numberArray = ['f', 'o', 'o'];
   let timeInterval;
   let zone = '';
-  let moment = '';
+  let moment = 'general';
   let prev_moment = '';
 
   const selectNewVideo = () => {
 
-    const filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location);
+    if(moment === 'general' || moment === ''){
+      filteredVideos = videos.filter((video) => video.location === location);
+    }else {
+      filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location);
+    }
 
+    console.log(filteredVideos);
     const randomVideo =
       filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
     console.log(randomVideo);

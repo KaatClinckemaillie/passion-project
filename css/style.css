@@ -26,15 +26,14 @@ video {
   width: 1280px;
   transform-origin: -2000px center;
   transition: transform 0.8s;
-  grid-row: 1 / 2;
-  grid-column: 1/2;
+  
 }
 
 
 
 svg {
   position: absolute;
-  top: 0;
+  top: 0px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -42,9 +41,10 @@ svg {
   transition: transform 0.8s;
   grid-row: 1 / 2;
   grid-column: 1/2;
+  border: solid black 10px;
 }
 
-.vignet {
+/* .vignet {
   position: absolute;
   top: 0;
   left: 0;
@@ -54,7 +54,7 @@ svg {
   transition: transform 0.8s;
 
   
-}
+} */
 
 .rect__mask {
   -webkit-mask: url(#mask);
@@ -68,7 +68,6 @@ svg {
   color: black;
   display: grid;
   place-content: center;
-  border: black solid 3px;
   grid-row: 1 / 2;
   grid-column: 1/2;
 }
@@ -80,6 +79,17 @@ svg {
   grid-row: 1 / 2;
   grid-column: 1/2;
   z-index: 10;
+}
+
+.vignet {
+  background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,.4) 100%);
+
+}
+
+.video_border {
+  border: solid black 10px; 
+  grid-row: 1 / 2;
+  grid-column: 1/2;
 }
 
 .text {
