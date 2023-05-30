@@ -12,11 +12,12 @@
   <body>
     <div class="wrapper">
       <div class="frame">
+        <div class="vignet"></div>
         <div class="overlay hidden">
           <div class="date text"></div>
           <div class="time text"></div>
         </div>
-        <div class="video_border">
+        <div class="video_wrapper">
           <video
             class="video hidden"
             src="../../assets/video/1.mp4"
@@ -27,7 +28,32 @@
           ></video>
         </div>
         <div class="intro">
-          <p>Recall to DC</p>
+          <p class="intro__title text-animation">Recall to DC</p>
+          <div class="intro__zipcode hidden intro__text--wrapper">
+            <p class="text-animation intro__subtitle">Enter Zipcode</p>
+            <div class="zipcode input">
+              <div class="zipcode__number input__item"></div>
+              <div class="zipcode__number input__item"></div>
+              <div class="zipcode__number input__item"></div>
+              <div class="zipcode__number input__item"></div>
+              <div class="zipcode__number input__item"></div>
+            </div>
+          </div>
+          <div class="intro__date hidden  intro__text--wrapper">
+            <p class="text-animation intro__subtitle">Enter current time (24h)</p>
+            <p class="intro__subtitle">Press button 1 to enter</p>
+            <div class="time-input input">
+              <div class="time-input__hours time-input__item">
+                <div class="time__number input__item"></div>
+                <div class="time__number input__item"></div>
+              </div>
+              <div class="text-animation colon">:</div>
+              <div class="time-input__minutes time-input__item">
+                <div class="time__number input__item"></div>
+                <div class="time__number input__item"></div>
+              </div>
+            </div>
+          </div>
         </div>
         
         
@@ -63,7 +89,8 @@
           fill="#000"
         />
       </svg>
-      <div class="vignet"></div>
+      
+      
       
     </div>
     <script src="script/script.js"></script>

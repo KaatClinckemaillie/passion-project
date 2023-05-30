@@ -1,8 +1,16 @@
+@font-face {
+  font-family: SpaceGrotesk;
+  src: url(../../assets/font/SpaceGrotesk-Light.ttf);
+}
+
 body {
   height: 100vh;
   display: grid;
   place-content: center;
   background-color: black;
+  overflow: hidden;
+  font-family: SpaceGrotesk;
+  font-size: 2rem;
 }
 
 
@@ -17,15 +25,19 @@ body {
 
 .frame {
   display: grid;
-  grid-template: 1fr / 1fr;;
+  grid-template: 1fr / 1fr;
 }
 
-
+.video_wrapper {
+  border: solid black 10px; 
+  grid-row: 1 / 2;
+  grid-column: 1/2;
+}
 
 video {
   width: 1280px;
   transform-origin: -2000px center;
-  transition: transform 0.8s;
+  transition: transform 1s;
   
 }
 
@@ -33,15 +45,18 @@ video {
 
 svg {
   position: absolute;
-  top: 0px;
-  left: 0;
+  top: -390px;
+  left: -100px;
   width: 100%;
   height: 100%;
   transform-origin: -2000px center;
-  transition: transform 0.8s;
+  transition: transform 0.7s;
   grid-row: 1 / 2;
   grid-column: 1/2;
-  border: solid black 10px;
+  border-top: 400px solid black;
+  border-bottom: 500px solid black;
+  border-left: 100px solid black;
+  border-right: 100px solid black;
 }
 
 /* .vignet {
@@ -70,6 +85,77 @@ svg {
   place-content: center;
   grid-row: 1 / 2;
   grid-column: 1/2;
+  
+  
+}
+
+.intro__title {
+  text-transform: uppercase;
+  font-size: 3rem;
+  text-shadow: 0.06rem 0 0.06rem #ea36af, -0.125rem 0 0.06rem #75fa69;
+  letter-spacing: 0.125em;
+  animation-duration: 0.01s;
+  animation-name: textflicker;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+
+
+.input {
+  display: flex;
+  justify-content: space-between;
+}
+
+.intro__subtitle {
+  margin-top: -4rem;
+  margin-bottom: 4rem;
+}
+
+
+.intro__text--wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zipcode{
+  width: 300px;
+}
+
+.time-input{
+  width: 200px;
+}
+
+.colon{
+  width: 2rem;
+
+  height: 3rem;
+  display: grid;
+  place-content: center;
+}
+
+.input__item {
+  width: 2rem;
+  border-bottom: solid black 2px;
+  height: 3rem;
+  display: grid;
+  place-content: center;
+}
+
+.text-animation{
+  text-shadow: 0.06rem 0 0.06rem #ea36af, -0.125rem 0 0.06rem #75fa69;
+  animation-duration: 0.01s;
+  animation-name: textflicker;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.time-input__item{
+  width: 5rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .overlay{
@@ -82,15 +168,14 @@ svg {
 }
 
 .vignet {
-  background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,.4) 100%);
-
-}
-
-.video_border {
-  border: solid black 10px; 
+  width: 1280px;
+  height: 720px;
+  background-image: radial-gradient(ellipse at center, rgba(0,0,0,0) 80%, rgba(0,0,0,.4) 100%);
   grid-row: 1 / 2;
-  grid-column: 1/2;
+  grid-column: 1 / 2;
 }
+
+
 
 .text {
   text-align: right;
@@ -105,4 +190,13 @@ svg {
 
 .hidden {
   display: none;
+}
+
+@keyframes textflicker {
+  from {
+    text-shadow: 1px 0 0 #ea36af, -1px 0 0 #75fa69;
+  }
+  to {
+    text-shadow: 1.5px 0.25px 1px #ea36af, -1px -0.25px 1px #75fa69;
+  }
 }

@@ -1,5 +1,63 @@
 {
+  // states: start, zipcode, date, play 
   let state = 'start';
+
+  const zipCodesArray = [
+    20001,
+    20002,
+    20003,
+    20004,
+    20005,
+    20006,
+    20007,
+    20008,
+    20009,
+    20010,
+    20011,
+    20012,
+    20015,
+    20016,
+    20017,
+    20018,
+    20019,
+    20020,
+    20024,
+    20032,
+    20036,
+    20037,
+    20045,
+    20052,
+    20053,
+    20057,
+    20064,
+    20202,
+    20204,
+    20228,
+    20230,
+    20240,
+    20245,
+    20260,
+    20307,
+    20317,
+    20319,
+    20373,
+    20390,
+    20405,
+    20418,
+    20427,
+    20506,
+    20510,
+    20520,
+    20535,
+    20540,
+    20551,
+    20553,
+    20560,
+    20565,
+    20566,
+    20593,
+  ];
+
   const videos = [
     {
       id: "1",
@@ -143,7 +201,7 @@
     },
   ];
 
-  const beep = new Audio(`../assets/audio/beep.mp3`);
+  const audioZipcode = new Audio(`../assets/audio/enter_zipcode.mp3`);
   // audio files
   const audio = [
     new Audio(`../assets/audio/birds.mp3`),
@@ -158,13 +216,18 @@
   const $video = document.querySelector(".video");
   const $svg = document.querySelector(".svg");
   const $intro = document.querySelector(".intro");
+  const $introTitle = document.querySelector(".intro__title");
+  const $introZipcode = document.querySelector(".intro__zipcode");
+  const $introDate = document.querySelector(".intro__date");
   const $time = document.querySelector(".time");
   const $date = document.querySelector(".date");
   const $overlay = document.querySelector(".overlay");
+  const zipcodeNumbers = document.querySelectorAll(".zipcode__number");
+  const timeNumbers = document.querySelectorAll(".time__number");
 
   let location = "transport";
-  const numberCheckArray = [];
-  const numberArray = ['f', 'o', 'o'];
+  const numberArray = [];
+
   let timeInterval;
   let zone = '';
   let moment = 'general';
@@ -274,9 +337,17 @@
   };
 
   const reset = () => {
-    state = "start";
+
     $intro.classList.remove("hidden");
     $video.classList.add("hidden");
+
+    if(state == 'zipcode'){ 
+      audioZipcode.pause();
+      audioZipcode.currentTime = 0;
+      $introZipcode.classList.add("hidden");
+      $introTitle.classList.remove("hidden");
+    }
+    
     // stop all audio
     audio.forEach((item, index) => {
       if(index !== 6){
@@ -289,117 +360,212 @@
         })
       }
     });
+    state = "start";
   };    
 
-
-
-
-  const start = () => {
-    beep.play();
-    beep.loop = true;
+  const changeToDate = () => {
+    state = 'date';
+    $introDate.classList.remove("hidden");
+    $introZipcode.classList.add("hidden");
+    numberArray.length = 0;
+    for(let i = 0; i < 4; i++){
+      numberArray.push('');
+    }
+    console.log(numberArray);
   }
 
 
+  const checkZipcode = () => {
+    const zipcode = numberArray.join(''); 
+    console.log(zipcode);
+    // check if zipcode in zipCodesArray
+    if(zipCodesArray.includes(parseInt(zipcode))){
+      console.log("zipcode correct");
+      changeToDate();
+      
+    }else{
+      console.log("zipcode incorrect");
+      // play audio
+
+      // reset
+      numberArray.length = 0;
+      zipcodeNumbers.forEach((item) => {
+        item.innerHTML = "";
+      });
+    }
+  }
+
+  const enterNumber = (number) => {
+    if(state == 'zipcode'){
+      if(!audioZipcode.paused){
+        audioZipcode.pause();
+        audioZipcode.currentTime = 0;
+      }
+      if(numberArray.length < 5){
+        numberArray.push(number);
+        console.log(numberArray);
+        zipcodeNumbers[numberArray.length - 1].innerHTML = `<p class="text-animation">${number}</p>`;
+      }
+      if(numberArray.length == 5){
+        checkZipcode();
+      }
+    }else if(state == 'date'){
+      numberArray.shift();
+      numberArray.push(number);
+      timeNumbers.forEach((number, index) => {
+        number.innerHTML = `<p class="text-animation">${numberArray[index]}</p>`;
+      });
+    }
+  }
+
   
 
-  // check if two arrays are equal
-  const checkEqual = (arr1, arr2) => {
-    for (let i = 0; i < arr1.length; i++) {
-      if(arr1[i] !== arr2[i]){
-        return false;
-      }
-    }
-    return true;
+  const checkDate = () => { 
+    console.log('check date');
   }
 
   const handleKeydown = (e) => {
     const key = e.key;
     // check state
-
-
-    
-    if(state == "start"){
-      if(key === "s"){
-        start();
+    if(state == "start"){ 
+      switch(key){
+        case "s":
+          state = "zipcode";
+          audioZipcode.play();
+          audioZipcode.loop = true;
+          $introTitle.classList.add("hidden");
+          $introZipcode.classList.remove("hidden");
+          break;
+        default:
+            console.log("unknown key pressed");
+            break;
       }
-      
-      if(numberCheckArray.length < 3){
-        numberCheckArray.push(key);
-        if(!checkEqual(numberCheckArray, numberArray)){
-          numberCheckArray.length = 0;
-        }else{
-          console.log(numberCheckArray)
-        }
-      }else if(numberCheckArray.length === 3){
-        state = "play";
-        $intro.classList.add("hidden");
-        $video.classList.remove("hidden");
-        beep.pause();
-        beep.currentTime = 0;
-      } 
-
-    }else if(state == "play"){
-
-    switch (key) {
-      case "a":
-        location = "transport";
-        rotateFrame();
-        break;
-      case "b":
-        location = "street";
-        rotateFrame();
-        break;
-      case "c":
-        location = "bar";
-        rotateFrame();
-        break;
-      case "d":
-        location = "monument";
-        rotateFrame();
-        break;
-      case "e":
-        location = "sport";
-        rotateFrame();
-        break;
-      // audio files
-      case "f":
-        playAduio(0);
-        break;
-      case "g":
-        playAduio(1);
-        break;
-      case "h":
-        playAduio(2);
-        break;
-      case "i":
-        playAduio(3);
-        break;
-      case "j":
-        playAduio(4);
-        break;
-      case "k":
-        playAduio(5);
-        break;
-      case "l":
-        playAduio(6);
-        break;
-      case "p":
-        switchZone('Europe/Brussels');
-        break;
-      case "q":
-        switchZone('America/New_York');
-        break;
-      case "s":
-        switchZone('');
-        break;
-      // reset
-      case "r":
+    }
+    if(state == "zipcode" || state == "date"){
+      switch(key){
+        case "f":
+          console.log("f");
+          enterNumber(1);
+          break;
+        case "g":
+          enterNumber(2);
+          break;
+        case "h":
+          enterNumber(3);
+          break;
+        case "i":
+          enterNumber(4);
+          break;
+        case "j":
+          enterNumber(5);
+          break;
+        case "k":
+          enterNumber(6);
+          break;
+        case "l":
+          enterNumber(7);
+          break;
+        case "m":
+          enterNumber(8);
+          break;
+        case "n":
+          enterNumber(9);
+          break;
+        case "o":
+          enterNumber(0);
+          break;
+        case 'r':
           reset();
           break;
-      default:
-        console.log("unknown key pressed");
-        break;
+        default:
+          console.log("unknown key pressed");
+          break;
+      }
+     
+
     }
+    
+    if(state == "date"){
+      switch(key){
+        case "a":
+          console.log("a");
+          checkDate();
+          break;
+        default:
+          console.log("unknown key pressed");
+      }
+    }
+    
+    if(state == "play"){
+      switch (key) {
+        case "a":
+          location = "transport";
+          rotateFrame();
+          break;
+        case "b":
+          location = "street";
+          rotateFrame();
+          break;
+        case "c":
+          location = "bar";
+          rotateFrame();
+          break;
+        case "d":
+          location = "monument";
+          rotateFrame();
+          break;
+        case "e":
+          location = "sport";
+          rotateFrame();
+          break;
+        // audio files
+        case "f":
+          playAduio(0);
+          break;
+        case "g":
+          playAduio(1);
+          break;
+        case "h":
+          playAduio(2);
+          break;
+        case "i":
+          playAduio(3);
+          break;
+        case "j":
+          playAduio(4);
+          break;
+        case "k":
+          playAduio(5);
+          break;
+        case "l":
+          playAduio(6);
+          break;
+        case "m":
+          playAduio(7);
+          break;
+        case "n":
+          playAduio(8);
+          break;
+        case "o":
+          playAduio(9);
+          break;
+        case "p":
+          switchZone('Europe/Brussels');
+          break;
+        case "q":
+          switchZone('America/New_York');
+          break;
+        case "s":
+          switchZone('');
+          break;
+        // reset
+        case "r":
+            reset();
+            break;
+        default:
+          console.log("unknown key pressed");
+          break;
+      }
     }
   };
 
@@ -408,6 +574,8 @@
 
   const init = () => {
     document.addEventListener("keydown", handleKeydown);
+
+
   };
 
   init();
