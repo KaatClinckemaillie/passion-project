@@ -1,5 +1,5 @@
 {
-  // states: start, zipcode, date, play 
+  // states: start, zipcode, time, play 
   let state = 'start';
 
   const zipCodesArray = [
@@ -218,12 +218,13 @@
   const $intro = document.querySelector(".intro");
   const $introTitle = document.querySelector(".intro__title");
   const $introZipcode = document.querySelector(".intro__zipcode");
-  const $introDate = document.querySelector(".intro__date");
+  const $introTime = document.querySelector(".intro__time");
   const $time = document.querySelector(".time");
   const $date = document.querySelector(".date");
   const $overlay = document.querySelector(".overlay");
   const zipcodeNumbers = document.querySelectorAll(".zipcode__number");
   const timeNumbers = document.querySelectorAll(".time__number");
+  
 
   let location = "transport";
   const numberArray = [];
@@ -232,6 +233,10 @@
   let zone = '';
   let moment = 'general';
   let prev_moment = '';
+
+  let hours;
+  let minutes;
+  let seconds;
 
   const selectNewVideo = () => {
 
@@ -364,11 +369,11 @@
   };    
 
   const changeToDate = () => {
-    state = 'date';
-    $introDate.classList.remove("hidden");
+    state = 'time';
+    $introTime.classList.remove("hidden");
     $introZipcode.classList.add("hidden");
     numberArray.length = 0;
-    for(let i = 0; i < 4; i++){
+    for(let i = 0; i < timeNumbers.length; i++){
       numberArray.push('');
     }
     console.log(numberArray);
@@ -413,7 +418,7 @@
         }, 100);
         
       }
-    }else if(state == 'date'){
+    }else if(state == 'time'){
       numberArray.shift();
       numberArray.push(number);
       timeNumbers.forEach((number, index) => {
@@ -423,19 +428,43 @@
   }
 
   
-  // checks if date is valid
-  const checkDate = () => { 
-    console.log('check date');
-    const hours = parseInt(numberArray.slice(0, 2).join(''));
-    const minutes = parseInt(numberArray.slice(2, 4).join(''));
-    console.log(hours);
-    console.log(minutes);
-    if(hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60){
-      console.log("date correct");
+  // checks if time is valid
+  const checkTime = () => { 
+    console.log('check time');
+    hours = parseInt(numberArray.slice(0, 2).join(''));
+    minutes = parseInt(numberArray.slice(2, 4).join(''));
+    seconds = parseInt(numberArray.slice(4, 6).join(''));
+    if(hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60 && seconds >= 0 && seconds < 60){
+      console.log("time correct");
+      startClock();
     }else {
-      console.log("date incorrect");
+      console.log("time incorrect");
     }
 
+  }
+
+  const startClock = () => {
+    clockInterval = setInterval(updateClock, 1000);
+  }
+
+  const updateClock = () => {
+    seconds++;
+    if(seconds == 60){  
+      seconds = 0;
+      minutes++;
+    }
+    if(minutes == 60){
+      minutes = 0;
+      hours++;
+    }
+    if(hours == 24){  
+      hours = 0;
+    }
+    console.log(`${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
+  }
+
+  const formatTime = (time) => {
+    return time < 10 ? `0${time}` : time;
   }
 
   const handleKeydown = (e) => {
@@ -455,10 +484,9 @@
             break;
       }
     }
-    if(state == "zipcode" || state == "date"){
+    if(state == "zipcode" || state == "time"){
       switch(key){
         case "f":
-          console.log("f");
           enterNumber(1);
           break;
         case "g":
@@ -499,14 +527,14 @@
 
     }
     
-    if(state == "date"){
+    if(state == "time"){
       switch(key){
         case "a":
           console.log("a");
-          checkDate();
+          checkTime();
           break;
         default:
-          console.log("nothing");
+          break;
       }
     }
     
