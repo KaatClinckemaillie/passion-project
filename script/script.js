@@ -407,7 +407,11 @@
         zipcodeNumbers[numberArray.length - 1].innerHTML = `<p class="text-animation">${number}</p>`;
       }
       if(numberArray.length == 5){
-        checkZipcode();
+        // wait a little bit so user also sees the last number
+        setTimeout(function () {
+          checkZipcode();
+        }, 100);
+        
       }
     }else if(state == 'date'){
       numberArray.shift();
@@ -419,9 +423,19 @@
   }
 
   
-
+  // checks if date is valid
   const checkDate = () => { 
     console.log('check date');
+    const hours = parseInt(numberArray.slice(0, 2).join(''));
+    const minutes = parseInt(numberArray.slice(2, 4).join(''));
+    console.log(hours);
+    console.log(minutes);
+    if(hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60){
+      console.log("date correct");
+    }else {
+      console.log("date incorrect");
+    }
+
   }
 
   const handleKeydown = (e) => {
@@ -492,7 +506,7 @@
           checkDate();
           break;
         default:
-          console.log("unknown key pressed");
+          console.log("nothing");
       }
     }
     
