@@ -66,7 +66,7 @@
     },
     {
       id: "2",
-      moment: "morning",
+      moment: "evening",
       location: "street",
     },
     {
@@ -77,7 +77,7 @@
     {
       id: "4",
       moment: "morning",
-      location: "bar",
+      location: "public",
     },
     {
       id: "5",
@@ -131,33 +131,33 @@
     },
     {
       id: "15",
-      moment: "general",
-      location: "bar",
+      moment: "evening",
+      location: "public",
     },
     {
       id: "16",
-      moment: "evening",
+      moment: "night",
       location: "street",
     },
     {
       id: "17",
-      moment: "evening",
-      location: "bar",
+      moment: "night",
+      location: "public",
     },
     {
       id: "18",
-      moment: "evening",
-      location: "bar",
+      moment: "night",
+      location: "public",
     },
     {
       id: "19",
-      moment: "evening",
-      location: "bar",
+      moment: "night",
+      location: "public",
     },
     {
       id: "20",
       moment: "evening",
-      location: "street",
+      location: "public",
     },
     {
       id: "21",
@@ -177,12 +177,12 @@
     {
       id: "24",
       moment: "noon",
-      location: "street",
+      location: "public",
     },
     {
       id: "25",
-      moment: "noon",
-      location: "bar",
+      moment: "evening",
+      location: "public",
     },
     {
       id: "26",
@@ -190,14 +190,79 @@
       location: "transport",
     },
     {
+      id: "27",
+      moment: "evening",
+      location: "transport",
+    },
+    {
       id: "28",
       moment: "noon",
-      location: "bar",
+      location: "public",
     },
     {
       id: "29",
       moment: "noon",
       location: "sport",
+    },
+    {
+      id: "30",
+      moment: "noon",
+      location: "public",
+    },
+    {
+      id: "31",
+      moment: "general",
+      location: "transport",
+    },
+    {
+      id: "32",
+      moment: "monument",
+      location: "evening",
+    },
+    {
+      id: "33",
+      moment: "morning",
+      location: "monument",
+    },
+    {
+      id: "34",
+      moment: "night",
+      location: "monument",
+    },
+    {
+      id: "35",
+      moment: "morning",
+      location: "monument",
+    },
+    {
+      id: "36",
+      moment: "noon",
+      location: "monument",
+    },
+    {
+      id: "37",
+      moment: "noon",
+      location: "transport",
+    },
+    {
+      id: "38",
+      moment: "noon",
+      location: "monument",
+    },
+    {
+      id: "39",
+      moment: "noon",
+      location: "public",
+    },
+    {
+      id: "40",
+      moment: "night",
+      location: "public",
+    },
+    {
+      id: "41",
+      moment: "night",
+      location: "street",
     },
   ];
 
@@ -206,17 +271,25 @@
   const audioTime = new Audio(`../assets/audio/enter_time.mp3`);
   const audioKey = new Audio(`../assets/audio/key.mp3`);
   const beep = new Audio(`../assets/audio/beep.mp3`);
+  const audioZipcodeError = new Audio(`../assets/audio/zipcode_incorrect.mp3`);
+  const audioTimeError = new Audio(`../assets/audio/time_incorrect.mp3`);
+  const audioEnjoy = new Audio(`../assets/audio/enjoy.mp3`);
   
   // audio files (DC sounds)
   const audio = [
-    new Audio(`../assets/audio/birds.mp3`),
-    new Audio(`../assets/audio/coffee.mp3`),
-    new Audio(`../assets/audio/rain.mp3`),
     new Audio(`../assets/audio/street.mp3`),
+    new Audio(`../assets/audio/birds.mp3`),
+    new Audio(`../assets/audio/rain.mp3`),
+    new Audio(`../assets/audio/americans.mp3`),
+    new Audio(`../assets/audio/coffeeshop.mp3`),
+    new Audio(`../assets/audio/street-music.mp3`),
+    // short sounds
     new Audio(`../assets/audio/elevator.mp3`),
     new Audio(`../assets/audio/metro.mp3`),
-    [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)]
+    [new Audio(`../assets/audio/kassa_01.mp3`), new Audio(`../assets/audio/kassa_02.mp3`), new Audio(`../assets/audio/kassa_03.mp3`), new Audio(`../assets/audio/kassa_04.mp3`), new Audio(`../assets/audio/kassa_05.mp3`)],
   ]
+
+  const indexKassaSound = 8;
   
   const $video = document.querySelector(".video");
   const $svg = document.querySelector(".svg");
@@ -233,7 +306,6 @@
   let location = "transport";
   const numberArray = [];
 
-  let timeInterval;
   let zone = '';
   let moment = 'general';
   let prev_moment = '';
@@ -312,7 +384,7 @@
   }
 
   const playAduio = (audioNumber) => {
-    if (audioNumber === 6) {
+    if (audioNumber === indexKassaSound) {
       const randomAudio = audio[audioNumber][Math.floor(Math.random() * audio[audioNumber].length)];
       randomAudio.play();
       return;
@@ -324,7 +396,7 @@
       return;
     }else {
       audio[audioNumber].play();
-      if (audioNumber <= 3) {
+      if (audioNumber <= 5) {
         audio[audioNumber].loop = true;
       }
     }
@@ -333,7 +405,9 @@
   const reset = () => {
 
     $intro.classList.remove("hidden");
+    $introTitle.classList.remove("hidden");
     $video.classList.add("hidden");
+    beep.pause();
 
     if(state == 'zipcode'){ 
       audioZipcode.pause();
@@ -344,7 +418,7 @@
     
     // stop all audio
     audio.forEach((item, index) => {
-      if(index !== 6){
+      if(index !== indexKassaSound){
         item.pause();
         item.currentTime = 0;
       }else {
@@ -383,7 +457,7 @@
     }else{
       console.log("zipcode incorrect");
       // play audio
-
+      audioZipcodeError.play();
       // reset
       numberArray.length = 0;
       zipcodeNumbers.forEach((item) => {
@@ -440,6 +514,8 @@
       changeToPlay();
     }else {
       console.log("time incorrect");
+      // play audio
+      audioTimeError.play();
     }
 
   }
@@ -455,8 +531,9 @@
     // wait a little bit so frame doesn't change too fast
     setTimeout(function () {
       state = 'play';
+      // play audio 
+      audioEnjoy.play();
     }, 500);
-    
   }
 
   const startClock = () => {
@@ -502,7 +579,7 @@
 
   const deleteAllAudio = () => {
     audio.forEach((item, index) => {
-      if(index !== 6){
+      if(index !== indexKassaSound){
         item.pause();
         item.currentTime = 0;
       }else {
@@ -531,8 +608,7 @@
             break;
       }
     }
-    if(state == "zipcode" || state == "time"){
-      
+    if(state == "zipcode" || state == "time"){ 
       switch(key){
         case "f":
           enterNumber(1);
@@ -571,10 +647,7 @@
           console.log("unknown key pressed");
           break;
       }
-     
-
     }
-    
     if(state == "time"){
       switch(key){
         case "a":
@@ -587,6 +660,8 @@
     }
     
     if(state == "play"){
+      audioEnjoy.pause();
+      audioEnjoy.currentTime = 0;
       switch (key) {
         case "a":
           location = "transport";
@@ -597,7 +672,7 @@
           rotateFrame();
           break;
         case "c":
-          location = "bar";
+          location = "public";
           rotateFrame();
           break;
         case "d":
@@ -659,8 +734,6 @@
     }
   };
 
-
-  
 
   const init = () => {
     document.addEventListener("keydown", handleKeydown);
