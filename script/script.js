@@ -82,7 +82,7 @@
     {
       id: "5",
       moment: "morning",
-      location: "monument",
+      location: "street",
     },
     {
       id: "6",
@@ -91,7 +91,7 @@
     },
     {
       id: "7",
-      moment: "morning",
+      moment: "evening",
       location: "street",
     },
     {
@@ -201,8 +201,13 @@
     },
   ];
 
+  // phone sounds
   const audioZipcode = new Audio(`../assets/audio/enter_zipcode.mp3`);
-  // audio files
+  const audioTime = new Audio(`../assets/audio/enter_time.mp3`);
+  const audioKey = new Audio(`../assets/audio/key.mp3`);
+  const beep = new Audio(`../assets/audio/beep.mp3`);
+  
+  // audio files (DC sounds)
   const audio = [
     new Audio(`../assets/audio/birds.mp3`),
     new Audio(`../assets/audio/coffee.mp3`),
@@ -220,7 +225,6 @@
   const $introZipcode = document.querySelector(".intro__zipcode");
   const $introTime = document.querySelector(".intro__time");
   const $time = document.querySelector(".time");
-  const $date = document.querySelector(".date");
   const $overlay = document.querySelector(".overlay");
   const zipcodeNumbers = document.querySelectorAll(".zipcode__number");
   const timeNumbers = document.querySelectorAll(".time__number");
@@ -235,6 +239,7 @@
   let prev_moment = '';
 
   let hours;
+  let hoursDC;
   let minutes;
   let seconds;
 
@@ -260,63 +265,47 @@
       selectNewVideo();
       $video.style.transform = "rotate(0deg)";
       $svg.style.transform = "rotate(0deg)";
+      $overlay.style.transform = "rotate(0deg)";
     }, 500);
   };
 
   const rotateFrame = () => {
+    audioKey.play();
     $video.style.transform = "rotate(25deg)";
     $svg.style.transform = "rotate(25deg)";
+    $overlay.style.transform = "rotate(25deg)";
     changeVideoAfterDelay();
   };
 
-  const displayTime = () => {
-    let date;
-    const dateBrussels = new Date();
-    const dateDc = new Date(dateBrussels.toLocaleString("en-US", { timeZone: zone }));
 
-    if(zone === 'Europe/Brussels'){
-      date = dateBrussels;
-    }else if(zone === 'America/New_York'){
-      date = dateDc;
-    }
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
-    
-    selectMoment(hours);
-    
-    $time.innerHTML = `${hours}:${minutes}:${seconds}`;
-    $date.innerHTML = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-  };
 
   const selectMoment = (hours) => {
 
     if(zone === ''){
       moment = "general";
-    }else if (hours >= 4 && hours < 11) {
+    }else if (hours >= 5 && hours < 11) {
       moment = "morning";
-    } else if (hours >= 11 && hours < 17) {
+    } else if (hours >= 11 && hours < 16) {
       moment = "noon";
-    } else if (hours >= 17 && hours < 22) {
+    } else if (hours >= 16 && hours < 22) {
       moment = "evening";
-    } else {
-      moment = "general";
+    } else if (hours >= 22 || hours < 5) {
+      moment = "night";
     }
 
+    // if moment is changed, change the video as well
     if(moment !== prev_moment){
       selectNewVideo();
     }
     prev_moment = moment;
-
+    console.log(moment);
   };
 
-  const switchZone = (newZone) => { 
+  const showTime = (newZone) => { 
     zone = newZone;
     if(zone === ''){
-      clearInterval(timeInterval);
       $overlay.classList.add("hidden");
     }else {
-      timeInterval = setInterval(displayTime, 1000);
       $overlay.classList.remove("hidden");
     }
     
@@ -370,6 +359,9 @@
 
   const changeToDate = () => {
     state = 'time';
+    // play audio
+    audioTime.play();
+
     $introTime.classList.remove("hidden");
     $introZipcode.classList.add("hidden");
     numberArray.length = 0;
@@ -401,6 +393,9 @@
   }
 
   const enterNumber = (number) => {
+    beep.play();
+    beep.loop = true;
+    audioKey.play();
     if(state == 'zipcode'){
       if(!audioZipcode.paused){
         audioZipcode.pause();
@@ -436,11 +431,32 @@
     seconds = parseInt(numberArray.slice(4, 6).join(''));
     if(hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60 && seconds >= 0 && seconds < 60){
       console.log("time correct");
+      if(hours >= 6 && hours < 24){
+        hoursDC = hours - 6;
+      }else if(hours >= 0 && hours < 6){
+        hoursDC = hours + 18;
+      }
       startClock();
+      changeToPlay();
     }else {
       console.log("time incorrect");
     }
 
+  }
+
+  const changeToPlay = () => {
+    // stop audio
+    audioTime.pause();
+    audioTime.currentTime = 0;
+    beep.pause();
+    $introTime.classList.add("hidden");
+    $video.classList.remove("hidden");
+    $intro.classList.add("hidden");
+    // wait a little bit so frame doesn't change too fast
+    setTimeout(function () {
+      state = 'play';
+    }, 500);
+    
   }
 
   const startClock = () => {
@@ -456,15 +472,46 @@
     if(minutes == 60){
       minutes = 0;
       hours++;
+      hoursDC++;
     }
     if(hours == 24){  
       hours = 0;
     }
-    console.log(`${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
+    if(hoursDC == 24){  
+      hoursDC = 0;
+    }
+
+    
+
+    if(zone == 'DC'){
+      selectMoment(hoursDC);
+      console.log(`${ formatTime(hoursDC)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
+      $time.innerHTML = `${ formatTime(hoursDC)}:${ formatTime(minutes)}:${ formatTime(seconds)}`;
+
+    } else if(zone == 'BXL'){
+      selectMoment(hours);
+      console.log(`${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
+      $time.innerHTML = `${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`;
+    }
+    
   }
 
   const formatTime = (time) => {
     return time < 10 ? `0${time}` : time;
+  }
+
+  const deleteAllAudio = () => {
+    audio.forEach((item, index) => {
+      if(index !== 6){
+        item.pause();
+        item.currentTime = 0;
+      }else {
+        item.forEach((item) => {
+          item.pause();
+          item.currentTime = 0;
+        })
+      }
+    });
   }
 
   const handleKeydown = (e) => {
@@ -485,6 +532,7 @@
       }
     }
     if(state == "zipcode" || state == "time"){
+      
       switch(key){
         case "f":
           enterNumber(1);
@@ -589,16 +637,16 @@
           playAduio(8);
           break;
         case "o":
-          playAduio(9);
+          deleteAllAudio();
           break;
         case "p":
-          switchZone('Europe/Brussels');
+          showTime('BXL');
           break;
         case "q":
-          switchZone('America/New_York');
+          showTime('DC');
           break;
         case "s":
-          switchZone('');
+          showTime('');
           break;
         // reset
         case "r":

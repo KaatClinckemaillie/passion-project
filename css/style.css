@@ -169,6 +169,8 @@ svg {
   grid-row: 1 / 2;
   grid-column: 1/2;
   z-index: 10;
+  transform-origin: -2000px center;
+  transition: transform 1s;
 }
 
 .vignet {
