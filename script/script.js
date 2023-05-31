@@ -1,6 +1,6 @@
 {
-  // states: start, zipcode, time, play 
-  let state = 'start';
+  // states: setup, start, zipcode, time, play 
+  let state = 'setup';
 
   const zipCodesArray = [
     20001,
@@ -216,8 +216,8 @@
     },
     {
       id: "32",
-      moment: "monument",
-      location: "evening",
+      moment: "evening",
+      location: "monument",
     },
     {
       id: "33",
@@ -264,6 +264,11 @@
       moment: "night",
       location: "street",
     },
+    {
+      id: "42",
+      moment: "noon",
+      location: "street",
+    },
   ];
 
   // phone sounds
@@ -296,15 +301,16 @@
   const $intro = document.querySelector(".intro");
   const $introTitle = document.querySelector(".intro__title");
   const $introZipcode = document.querySelector(".intro__zipcode");
-  const $introTime = document.querySelector(".intro__time");
+  const $setup = document.querySelector(".setup");
   const $time = document.querySelector(".time");
   const $overlay = document.querySelector(".overlay");
   const zipcodeNumbers = document.querySelectorAll(".zipcode__number");
   const timeNumbers = document.querySelectorAll(".time__number");
+  const $setupError = document.querySelector(".setup__error");
   
 
   let location = "transport";
-  const numberArray = [];
+  const numberArray = ['', '', '', '', '', ''];
 
   let zone = '';
   let moment = 'general';
@@ -315,12 +321,14 @@
   let minutes;
   let seconds;
 
-  const selectNewVideo = () => {
 
+  const selectNewVideo = () => {
+    const prev_video = $video.src.split("/").pop().split(".")[0];
+    console.log(prev_video);
     if(moment === 'general' || moment === ''){
-      filteredVideos = videos.filter((video) => video.location === location);
+      filteredVideos = videos.filter((video) => video.location === location && video.id !== prev_video);
     }else {
-      filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location);
+      filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location && video.id !== prev_video);
     }
 
     console.log(filteredVideos);
@@ -403,6 +411,15 @@
   };
 
   const reset = () => {
+    numberArray.length = 0;
+    console.log(numberArray);
+    zipcodeNumbers.forEach((item) => {
+      item.innerHTML = "";
+    });
+
+    timeNumbers.forEach((item) => {
+      item.innerHTML = "";
+    });
 
     $intro.classList.remove("hidden");
     $introTitle.classList.remove("hidden");
@@ -413,7 +430,7 @@
       audioZipcode.pause();
       audioZipcode.currentTime = 0;
       $introZipcode.classList.add("hidden");
-      $introTitle.classList.remove("hidden");
+
     }
     
     // stop all audio
@@ -436,7 +453,7 @@
     // play audio
     audioTime.play();
 
-    $introTime.classList.remove("hidden");
+    $setup.classList.remove("hidden");
     $introZipcode.classList.add("hidden");
     numberArray.length = 0;
     for(let i = 0; i < timeNumbers.length; i++){
@@ -452,7 +469,7 @@
     // check if zipcode in zipCodesArray
     if(zipCodesArray.includes(parseInt(zipcode))){
       console.log("zipcode correct");
-      changeToDate();
+      play();
       
     }else{
       console.log("zipcode incorrect");
@@ -467,10 +484,11 @@
   }
 
   const enterNumber = (number) => {
-    beep.play();
-    beep.loop = true;
-    audioKey.play();
+    
     if(state == 'zipcode'){
+      beep.play();
+      beep.loop = true;
+      audioKey.play();
       if(!audioZipcode.paused){
         audioZipcode.pause();
         audioZipcode.currentTime = 0;
@@ -487,11 +505,11 @@
         }, 100);
         
       }
-    }else if(state == 'time'){
+    }else if(state == 'setup'){
       numberArray.shift();
       numberArray.push(number);
       timeNumbers.forEach((number, index) => {
-        number.innerHTML = `<p class="text-animation">${numberArray[index]}</p>`;
+        number.innerHTML = `<p">${numberArray[index]}</p>`;
       });
     }
   }
@@ -511,21 +529,34 @@
         hoursDC = hours + 18;
       }
       startClock();
-      changeToPlay();
+      start();
     }else {
       console.log("time incorrect");
-      // play audio
-      audioTimeError.play();
+      $setupError.innerHTML = `<p>Incorrect time</p>`;
     }
 
   }
 
-  const changeToPlay = () => {
+  const start = () => {
+    $introTitle.classList.remove("hidden");
+    $setup.classList.add("hidden");
+    state = 'start';
+  }
+
+  const zipcode = () => {
+    state = 'zipcode';
+    audioZipcode.play();
+    audioZipcode.loop = true;
+    $introTitle.classList.add("hidden");
+    $introZipcode.classList.remove("hidden");
+    numberArray.length = 0;
+  }
+
+  const play = () => {
     // stop audio
     audioTime.pause();
     audioTime.currentTime = 0;
     beep.pause();
-    $introTime.classList.add("hidden");
     $video.classList.remove("hidden");
     $intro.classList.add("hidden");
     // wait a little bit so frame doesn't change too fast
@@ -597,18 +628,15 @@
     if(state == "start"){ 
       switch(key){
         case "s":
+          zipcode();
           state = "zipcode";
-          audioZipcode.play();
-          audioZipcode.loop = true;
-          $introTitle.classList.add("hidden");
-          $introZipcode.classList.remove("hidden");
           break;
         default:
             console.log("unknown key pressed");
             break;
       }
     }
-    if(state == "zipcode" || state == "time"){ 
+    if(state == "zipcode" || state == "setup"){ 
       switch(key){
         case "f":
           enterNumber(1);
@@ -640,15 +668,23 @@
         case "o":
           enterNumber(0);
           break;
-        case 'r':
-          reset();
-          break;
         default:
           console.log("unknown key pressed");
           break;
       }
     }
-    if(state == "time"){
+    if(state == "zipcode"){
+      switch(key){
+        case 'r':
+          reset();
+          break;
+        default:
+          break;
+      }
+    }
+      
+
+    if(state == "setup"){
       switch(key){
         case "a":
           console.log("a");
@@ -736,6 +772,10 @@
 
 
   const init = () => {
+    numberArray.length = 0;
+    for(let i = 0; i < timeNumbers.length; i++){
+      numberArray.push('');
+    }
     document.addEventListener("keydown", handleKeydown);
 
 
