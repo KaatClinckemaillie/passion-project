@@ -307,6 +307,7 @@
   const zipcodeNumbers = document.querySelectorAll(".zipcode__number");
   const timeNumbers = document.querySelectorAll(".time__number");
   const $setupError = document.querySelector(".setup__error");
+  const $message = document.querySelector(".message");
   
 
   let location = "transport";
@@ -425,6 +426,7 @@
     $introTitle.classList.remove("hidden");
     $video.classList.add("hidden");
     beep.pause();
+    $introZipcode.classList.add("hidden");
 
     if(state == 'zipcode'){ 
       audioZipcode.pause();
@@ -562,6 +564,7 @@
     // wait a little bit so frame doesn't change too fast
     setTimeout(function () {
       state = 'play';
+      $message.classList.remove("hidden");
       // play audio 
       audioEnjoy.play();
     }, 500);
@@ -624,6 +627,22 @@
 
   const handleKeydown = (e) => {
     const key = e.key;
+    
+    switch(key){
+    case "p":
+      showTime('BXL');
+      break;
+    case "q":
+      showTime('DC');
+      break;
+    case "t":
+      showTime('');
+      break;
+    default:
+      break;
+    }
+
+
     // check state
     if(state == "start"){ 
       switch(key){
@@ -696,6 +715,7 @@
     }
     
     if(state == "play"){
+      $message.classList.add("hidden");
       audioEnjoy.pause();
       audioEnjoy.currentTime = 0;
       switch (key) {
@@ -749,15 +769,6 @@
           break;
         case "o":
           deleteAllAudio();
-          break;
-        case "p":
-          showTime('BXL');
-          break;
-        case "q":
-          showTime('DC');
-          break;
-        case "s":
-          showTime('');
           break;
         // reset
         case "r":

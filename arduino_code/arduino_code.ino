@@ -82,11 +82,15 @@ void loop() {
     Serial.println("reset");
     digitalWrite(ledPin_1, LOW);
     digitalWrite(ledPin_2, LOW);
+    Keyboard.write('r');
+  }else if(prev_hookState == HIGH && hookState == LOW){
+    Serial.println("start");
+    Keyboard.write('s');
   }
   prev_hookState = hookState;
 
   // if phone picked up, start checking buttons and dial
-  if(hookState == LOW){
+
     checkTimeButton();
 
     checkButton(buttonPin_1, buttonState_1, prev_buttonState_1, 1);
@@ -150,7 +154,7 @@ void loop() {
 
     prev_dialState = dialState;
     
-  }
+
 }
 
 void checkButton (int buttonPin, int& buttonState, int& prev_buttonState, int number) {
@@ -169,7 +173,7 @@ void checkButton (int buttonPin, int& buttonState, int& prev_buttonState, int nu
         Keyboard.write('b');
         break;
       case 3:
-        Keyboard.write('d');
+        Keyboard.write('c');
         break;
       case 4:
         Keyboard.write('d');
