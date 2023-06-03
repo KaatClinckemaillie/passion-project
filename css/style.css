@@ -6,8 +6,8 @@
 }
 
 :root {
-  --width-frame: 960px;
-  --height-frame: 540px
+  --width-frame: 1280px;
+  --height-frame: 720px
 }
 
 
@@ -27,7 +27,7 @@ body {
   position: relative;
   width: 100%;
   margin: 0 auto;
-  max-width: 1280;
+  max-width: 1280px;
   
 }
 
