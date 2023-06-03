@@ -271,6 +271,8 @@
     },
   ];
 
+  const startVideo = 6;
+
   // phone sounds
   const audioZipcode = new Audio(`../assets/audio/enter_zipcode.mp3`);
   const audioTime = new Audio(`../assets/audio/enter_time.mp3`);
@@ -313,7 +315,8 @@
   let location = "transport";
   const numberArray = ['', '', '', '', '', ''];
 
-  let zone = '';
+
+  let zone = 'none'; // 'none' BXL, DC
   let moment = 'general';
   let prev_moment = '';
 
@@ -325,17 +328,16 @@
 
   const selectNewVideo = () => {
     const prev_video = $video.src.split("/").pop().split(".")[0];
-    console.log(prev_video);
     if(moment === 'general' || moment === ''){
       filteredVideos = videos.filter((video) => video.location === location && video.id !== prev_video);
     }else {
       filteredVideos = videos.filter((video) => (video.moment === moment || video.moment === 'general') && video.location === location && video.id !== prev_video);
     }
 
-    console.log(filteredVideos);
+
     const randomVideo =
       filteredVideos[Math.floor(Math.random() * filteredVideos.length)];
-    console.log(randomVideo);
+
     $video.src = `../assets/video/${randomVideo.id}.mp4`;
   };
 
@@ -361,8 +363,7 @@
 
 
   const selectMoment = (hours) => {
-
-    if(zone === ''){
+    if(zone === 'none'){
       moment = "general";
     }else if (hours >= 5 && hours < 11) {
       moment = "morning";
@@ -379,12 +380,11 @@
       selectNewVideo();
     }
     prev_moment = moment;
-    console.log(moment);
   };
 
   const showTime = (newZone) => { 
     zone = newZone;
-    if(zone === ''){
+    if(zone === 'none'){
       $overlay.classList.add("hidden");
     }else {
       $overlay.classList.remove("hidden");
@@ -412,8 +412,9 @@
   };
 
   const reset = () => {
+    $video.src = `../assets/video/${6}.mp4`;
     numberArray.length = 0;
-    console.log(numberArray);
+    zone = '';
     zipcodeNumbers.forEach((item) => {
       item.innerHTML = "";
     });
@@ -450,24 +451,11 @@
     state = "start";
   };    
 
-  const changeToDate = () => {
-    state = 'time';
-    // play audio
-    audioTime.play();
 
-    $setup.classList.remove("hidden");
-    $introZipcode.classList.add("hidden");
-    numberArray.length = 0;
-    for(let i = 0; i < timeNumbers.length; i++){
-      numberArray.push('');
-    }
-    console.log(numberArray);
-  }
 
 
   const checkZipcode = () => {
     const zipcode = numberArray.join(''); 
-    console.log(zipcode);
     // check if zipcode in zipCodesArray
     if(zipCodesArray.includes(parseInt(zipcode))){
       console.log("zipcode correct");
@@ -596,12 +584,10 @@
 
     if(zone == 'DC'){
       selectMoment(hoursDC);
-      console.log(`${ formatTime(hoursDC)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
       $time.innerHTML = `${ formatTime(hoursDC)}:${ formatTime(minutes)}:${ formatTime(seconds)}`;
 
-    } else if(zone == 'BXL'){
+    } else if(zone == 'BXL' || zone == 'none'){
       selectMoment(hours);
-      console.log(`${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`);
       $time.innerHTML = `${ formatTime(hours)}:${ formatTime(minutes)}:${ formatTime(seconds)}`;
     }
     
@@ -628,20 +614,23 @@
   const handleKeydown = (e) => {
     const key = e.key;
     
-    switch(key){
-    case "p":
-      showTime('BXL');
-      break;
-    case "q":
-      showTime('DC');
-      break;
-    case "t":
-      showTime('');
-      break;
-    default:
-      break;
+    if(state !== "setup"){
+      switch(key){
+        case "p":
+          showTime('BXL');
+          break;
+        case "q":
+          showTime('DC');
+          break;
+        case "t":
+          showTime('none');
+          break;
+        default:
+          break;
+        }
     }
-
+    
+  
 
     // check state
     if(state == "start"){ 
@@ -706,7 +695,6 @@
     if(state == "setup"){
       switch(key){
         case "a":
-          console.log("a");
           checkTime();
           break;
         default:

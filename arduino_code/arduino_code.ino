@@ -23,7 +23,7 @@ int greenButtonState = 0;
 int blackButtonState = 0;
 int prev_greenButtonState = 0;
 int prev_blackButtonState = 0;
-int longPressDelay = 500;
+int longPressDelay = 200;
 
 int buttonState_1 = 0;
 int buttonState_2 = 0;
@@ -91,7 +91,8 @@ void loop() {
 
   // if phone picked up, start checking buttons and dial
 
-    checkTimeButton();
+    checkTimeButton(greenButtonPin, greenButtonState, prev_greenButtonState);
+    checkTimeButton(blackButtonPin, blackButtonState, prev_blackButtonState);
 
     checkButton(buttonPin_1, buttonState_1, prev_buttonState_1, 1);
     checkButton(buttonPin_2, buttonState_2, prev_buttonState_2, 2);
@@ -188,7 +189,37 @@ void checkButton (int buttonPin, int& buttonState, int& prev_buttonState, int nu
 
 }
 
-void checkTimeButton() {
+void checkTimeButton(int buttonPin, int& buttonState, int& prev_buttonState){
+  buttonState = digitalRead(buttonPin);
+  if(buttonState == LOW && prev_buttonState == HIGH) {
+    delay(longPressDelay);
+    if (digitalRead(buttonPin) == LOW) {
+      setTime(buttonPin);
+      if(buttonPin == 6){
+        digitalWrite(ledPin_1, HIGH);
+        digitalWrite(ledPin_2, LOW);
+      }else if(buttonPin == 5){
+        digitalWrite(ledPin_2, HIGH);
+        digitalWrite(ledPin_1, LOW);
+      }
+      
+    }else{
+      // no button pressed
+      setTime(0);
+      digitalWrite(ledPin_1, LOW);
+      digitalWrite(ledPin_2, LOW);
+    }
+  }
+
+  if(buttonState == HIGH && prev_buttonState == LOW){
+    setTime(0);
+    digitalWrite(ledPin_1, LOW);
+    digitalWrite(ledPin_2, LOW);
+  }
+  prev_buttonState = buttonState;
+}
+
+void checkTimeButton1() {
   greenButtonState = digitalRead(greenButtonPin);
   blackButtonState = digitalRead(blackButtonPin);
 
@@ -197,6 +228,11 @@ void checkTimeButton() {
     if (digitalRead(greenButtonPin) == LOW) {
       setTime(greenButtonPin);
       digitalWrite(ledPin_1, HIGH);
+      digitalWrite(ledPin_2, LOW);
+    }else{
+      // no button pressed
+      setTime(0);
+      digitalWrite(ledPin_1, LOW);
       digitalWrite(ledPin_2, LOW);
     }
   }
@@ -208,6 +244,11 @@ void checkTimeButton() {
       setTime(blackButtonPin);
       digitalWrite(ledPin_2, HIGH);
       digitalWrite(ledPin_1, LOW);
+    }else{
+      // no button pressed
+      setTime(0);
+      digitalWrite(ledPin_1, LOW);
+      digitalWrite(ledPin_2, LOW);
     }
   }
   prev_blackButtonState = blackButtonState;
@@ -216,8 +257,13 @@ void checkTimeButton() {
 void setTime(int buttonPin) {
   time = buttonPin;
   if(time != prev_time){
-    Serial.print("change time to");
-    Serial.println(time);
+    if(time == 6){
+      Keyboard.write('q');
+    }else if(time == 5){
+      Keyboard.write('p');
+    }else if(time == 0){
+      Keyboard.write('t');
+    }
   }
   prev_time = time;
 }
