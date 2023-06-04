@@ -196,7 +196,7 @@
     },
     {
       id: "28",
-      moment: "noon",
+      moment: "morning",
       location: "public",
     },
     {
@@ -384,11 +384,15 @@
 
   const showTime = (newZone) => { 
     zone = newZone;
-    if(zone === 'none'){
-      $overlay.classList.add("hidden");
-    }else {
-      $overlay.classList.remove("hidden");
-    }
+    setTimeout(function () {
+      // Code to be executed after 0.5 second
+      if(zone === 'none'){
+        $overlay.classList.add("hidden");
+      }else {
+        $overlay.classList.remove("hidden");
+      }
+    }, 1000);
+
     
   }
 
@@ -547,6 +551,7 @@
     audioTime.pause();
     audioTime.currentTime = 0;
     beep.pause();
+    $video.src = `../assets/video/${startVideo}.mp4`;
     $video.classList.remove("hidden");
     $intro.classList.add("hidden");
     // wait a little bit so frame doesn't change too fast
